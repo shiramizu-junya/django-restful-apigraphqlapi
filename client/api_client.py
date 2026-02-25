@@ -9,6 +9,10 @@ class APIClient:
         url = f"{self.base_url}/{endpoint.lstrip('/')}"
         response = requests.get(url, params=params)
         response.raise_for_status()
+        print(response.status_code)
+        print(response.headers)
+        print(response.text)
+
         return response.json()
 
     def post(self, endpoint: str, data: dict = None) -> dict:
@@ -34,5 +38,5 @@ if __name__ == "__main__":
     client = APIClient()
 
     # GET /api/
-    result = client.get("/api/")
+    result = client.get("/api/current-datetime/")
     print(result)
