@@ -6,11 +6,14 @@ from .serializers import ItemSerializer
 
 # Create your views here.
 class ItemView(APIView):
+
+    serializer_class = ItemSerializer
+
     def get(self, request):
         return Response({"message": "get"})
 
     def post(self, request):
-        serializer = ItemSerializer(data=request.data)
+        serializer = self.serializer_class(data=request.data)
         print(request.data)
         print(serializer)
         print(serializer.is_valid(raise_exception=True))

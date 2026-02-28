@@ -1,5 +1,10 @@
 from rest_framework import serializers
 
+def validate_count(value):
+    print(f"validate_count: {value}")
+    if value % 5 != 0:
+        raise serializers.ValidationError("count must be a multiple of 5")
+
 class ItemSerializer(serializers.Serializer):
     name = serializers.CharField(max_length=20)
     price = serializers.IntegerField(min_value=0)
