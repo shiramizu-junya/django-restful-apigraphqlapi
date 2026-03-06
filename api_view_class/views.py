@@ -76,3 +76,56 @@ class ItemDetailView(APIView):
                 "message": "item retrieved",
             }
         )
+
+    def put(self, request, pk):
+        try:
+            item = Item.objects.get(pk=pk)
+        except Item.DoesNotExist:
+            return Response(
+                {
+                    "data": None,
+                    "status": status.HTTP_404_NOT_FOUND,
+                    "message": "item not found",
+                }
+            )
+
+        serializer = self.serializer_class(item, data=request.data)
+
+        if serializer.is_valid(raise_exception=True):
+            serializer.save()  # serializerのsave()は、create()かupdate()を呼び出すだけで、実際の処理はcreate()かupdate()に書くべき
+            return Response(
+                {
+                    "data": serializer.data,
+                    "status": status.HTTP_200_OK,
+                    "message": "item updated",
+                }
+            )
+
+        return Response(
+            {
+                "data": serializer.errors,
+                "status": status.HTTP_400_BAD_REQUEST,
+                "message": "item update failed",
+            }
+        )
+
+    def delete(self, request, pk):
+        try:
+            item = Item.objects.get(pk=pk)
+        except Item.DoesNotExist:
+            return Response(
+                {
+                    "data": None,
+                    "status": status.HTTP_404_NOT_FOUND,
+                    "message": "item not found",
+                }
+            )
+
+        item.delete()
+        return Response(
+            {
+                "data": None,
+                "status": status.HTTP_204_NO_CONTENT,
+                "message": "item deleted",
+            }
+        )
