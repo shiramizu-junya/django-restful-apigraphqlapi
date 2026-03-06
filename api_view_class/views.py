@@ -51,3 +51,28 @@ class ItemView(APIView):
     def patch(self, request):
         return Response({"message": "patch"})
 
+
+class ItemDetailView(APIView):
+
+    serializer_class = ItemSerializer
+
+    def get(self, request, pk):
+        try:
+            item = Item.objects.get(pk=pk)
+        except Item.DoesNotExist:
+            return Response(
+                {
+                    "data": None,
+                    "status": status.HTTP_404_NOT_FOUND,
+                    "message": "item not found",
+                }
+            )
+
+        serializer = self.serializer_class(item)
+        return Response(
+            {
+                "data": serializer.data,
+                "status": status.HTTP_200_OK,
+                "message": "item retrieved",
+            }
+        )

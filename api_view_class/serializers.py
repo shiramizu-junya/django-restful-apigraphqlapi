@@ -10,6 +10,7 @@ def validate_count(value):
 
 
 class ItemSerializer(serializers.Serializer):
+    id = serializers.ReadOnlyField()
     name = serializers.CharField(max_length=20)
     description = serializers.CharField()
     price = serializers.IntegerField(min_value=0)
