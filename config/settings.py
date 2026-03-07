@@ -42,6 +42,7 @@ INSTALLED_APPS = [
     "drf_spectacular",
     "api",
     "api_view_class",
+    "apiv2",
 ]
 
 MIDDLEWARE = [
