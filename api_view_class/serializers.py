@@ -17,13 +17,17 @@ class ItemSerializer(serializers.Serializer):
     count = serializers.IntegerField(min_value=0)
 
     def validate_name(self, value):
-        print(f"validate_name: {value}")
+        if self.partial and value is None:
+            return value
+
         if value == "django":
             raise serializers.ValidationError("name must be django")
         return value
 
     def validate_price(self, value):
-        print(f"validate_price: {value}")
+        if self.partial and value is None:
+            return value
+
         if value < 1000:
             raise serializers.ValidationError(
                 "price must be greater than or equal to 1000"
@@ -31,21 +35,18 @@ class ItemSerializer(serializers.Serializer):
         return value
 
     def validate(self, data):
-        print(f"validate: {data}")
-        price = data.get("price")
-        count = data.get("count")
-        if price * count < 10000:
+        price = data.get("price", self.instance.price if self.instance else None)
+        count = data.get("count", self.instance.count if self.instance else None)
+        if price is not None and count is not None and price * count < 10000:
             raise serializers.ValidationError(
                 "total price must be greater than or equal to 10000"
             )
         return data
 
     def create(self, validated_data):
-        print(f"create: {validated_data}")
         return Item.objects.create(**validated_data)
 
     def update(self, instance, validated_data):
-        print(f"update: {instance}, {validated_data}")
         for attr, value in validated_data.items():
             setattr(instance, attr, value)
         instance.save()
